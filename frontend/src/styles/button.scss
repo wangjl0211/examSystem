@@ -1,0 +1,89 @@
+// 全局按钮样式增强
+
+.el-button {
+  cursor: pointer;
+  transition: all 0.1s; // 平滑过渡效果
+
+  // 添加激活状态反馈（轻微缩小）
+  &:active {
+    transform: scale(0.98);
+  }
+
+  // 增强焦点环（可选，确保可访问性）
+  &:focus-visible {
+    outline: 2px solid var(--el-color-primary);
+    outline-offset: 1px;
+  }
+
+  // 修复禁用状态
+  &.is-disabled {
+    cursor: not-allowed;
+    transform: none; // 禁用缩放效果
+    
+    &:active {
+      transform: none;
+    }
+  }
+}
+
+// 确保按钮内图标对齐
+.el-button .el-icon {
+  vertical-align: middle;
+}
+
+// 响应式设计的自定义按钮组布局
+.btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  align-content: center; /* 多行时垂直居中 */
+  gap: var(--btn-group-horizontal-gap, 8px) var(--btn-group-vertical-gap, 4px); /* 使用变量 */
+  transition: all 0.2s ease; /* 过渡动画 */
+  min-height: var(--btn-group-min-height, 44px); /* 适配按钮最小高度 */
+  box-sizing: border-box; /* 确保内边距不影响布局计算 */
+  line-height: var(--btn-group-line-height, 44px); /* 匹配按钮高度，避免换行后对齐偏移 */
+
+  // 适用于宽度有限的表格操作列 - 纵向排列
+  &.btn-group-vertical {
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch; /* 让按钮占满容器宽度 */
+    gap: 8px;
+    min-height: auto;
+
+    .el-button {
+      flex: 1 0 auto; /* 自适应宽度且不压缩 */
+      width: 100%;
+    }
+  }
+
+  // 确保按钮换行时正确对齐
+  .el-button {
+    flex-shrink: 0;
+    min-height: var(--btn-min-height, 32px); /* 使用变量 */
+    vertical-align: middle; /* 统一垂直对齐基准 */
+    margin: 0; /* 清除默认margin，统一通过gap控制间距 */
+  }
+
+  // 分屏模式（大屏手机/分屏）576px~768px
+  @media (min-width: 576px) and (max-width: 768px) {
+    justify-content: flex-start;
+    gap: 12px 8px; /* 增大间距避免挤兑 */
+    padding: 0 4px; /* 防止按钮超出容器 */
+  }
+
+  // 移动端竖屏（≤576px）
+  @media (max-width: 576px) {
+    flex-direction: column; /* 强制垂直排列 */
+    align-items: stretch;
+    justify-content: center;
+    gap: 12px; /* 匹配按钮44px高度的视觉比例 */
+
+    .el-button {
+      flex: 1 0 auto; /* 自适应宽度且不压缩 */
+      min-height: 44px; /* 触控友好的最小高度 */
+      width: 100%; /* 移动端按钮全宽 */
+    }
+  }
+}

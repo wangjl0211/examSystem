@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.org.wang.exam.mapper.StatMapper">
+
+    <!-- 各班人数统计 -->
+    <select id="studentSubjectCount" resultType="cn.org.wang.exam.model.vo.stat.SubjectStudentVO">
+        SELECT
+        g.id,
+        g.subject_name,
+        count(CASE WHEN s.id != g.user_id THEN 1 END) AS totalStudent
+        FROM t_subject g
+        LEFT JOIN t_user_subject ug ON g.id = ug.subject_id
+        LEFT JOIN t_user s ON ug.user_id = s.id
+        and s.is_deleted = 0
+        <where>
+            g.is_deleted = 0
+            <if test="roleId == 1">
+                AND g.user_id = #{id}
+            </if>
+        </where>
+        GROUP BY g.id
+        HAVING totalStudent > 0
+    </select>
+
+    <!-- 各班试卷统计 -->
+    <select id="examSubjectCount" resultType="cn.org.wang.exam.model.vo.stat.SubjectExamVO">
+        select g.id as id ,g.subject_name ,count(e.id) as total
+        from t_exam_subject as eg
+        <!--join t_subject as g on eg.subject_id = g.id-->
+        right join t_subject as g on eg.subject_id = g.id
+        left join t_exam as e on eg.exam_id = e.id
+        and e.is_deleted = 0
+        <where>
+            g.is_deleted = 0
+            <if test="roleId == 2">
+                AND g.id in
+                <foreach collection="subjectIdList" item="gId" open="(" separator="," close=")">
+                    #{gId}
+                </foreach>
+            </if>
+        </where>
+        group by g.id,
+        g.subject_name
+    </select>
+
+    <!-- 试题类型分布统计 -->
+    <select id="questionTypeCount" resultType="cn.org.wang.exam.model.vo.stat.SubjectExamVO">
+        SELECT
+        CASE qu_type
+        WHEN 1 THEN '单选题'
+        WHEN 2 THEN '多选题'
+        WHEN 3 THEN '判断题'
+        WHEN 4 THEN '简答题'
+        ELSE '未知类型'
+        END as subjectName,
+        count(*) as total
+        FROM t_question
+        WHERE is_deleted = 0
+        <if test="userId != null">
+            AND user_id = #{userId}
+        </if>
+        GROUP BY qu_type
+        HAVING total > 0
+    </select>
+
+</mapper>
+

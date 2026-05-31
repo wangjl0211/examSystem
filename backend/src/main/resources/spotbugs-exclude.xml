@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <!-- 过滤 MyBatis-Plus 生成的代码（Entity 类中的 getter/setter） -->
+    <Match>
+        <Package name="~cn\.org\.wang\.exam\.model\.entity\..*"/>
+        <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- 过滤 VO/DTO 类中的 EI_EXPOSE_REP（数据传输对象天然需要暴露内部状态） -->
+    <Match>
+        <Package name="~cn\.org\.wang\.exam\.model\.vo\..*"/>
+        <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- 过滤 DTO 类 -->
+    <Match>
+        <Package name="~cn\.org\.wang\.exam\.model\.dto\..*"/>
+        <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- 过滤 Query 查询对象类 -->
+    <Match>
+        <Package name="~cn\.org\.wang\.exam\.model\.query\..*"/>
+        <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- 过滤 Form 表单对象类 -->
+    <Match>
+        <Package name="~cn\.org\.wang\.exam\.model\.form\..*"/>
+        <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- 过滤 Service 实现类中的 Spring 依赖注入 -->
+    <Match>
+        <Package name="cn.org.wang.exam.service.impl"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- 过滤 Spring Controller 中的依赖注入（构造器注入模式） -->
+    <Match>
+        <Package name="cn.org.wang.exam.controller"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- 过滤 Config 配置类中的依赖注入 -->
+    <Match>
+        <Package name="~cn\.org\.wang\.exam\.config\..*"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- 过滤 Security 相关拦截器/过滤器中的依赖注入 -->
+    <Match>
+        <Or>
+            <Class name="cn.org.wang.exam.filter.JwtAuthenticationFilter"/>
+            <Class name="cn.org.wang.exam.filter.VerifyTokenFilter"/>
+            <Class name="cn.org.wang.exam.handler.AuthenticationEntryPointImpl"/>
+            <Class name="cn.org.wang.exam.handler.MyAuthenticationSuccessHandler"/>
+            <Class name="cn.org.wang.exam.handler.MyAuthenticationFailureHandler"/>
+            <Class name="cn.org.wang.exam.handler.MyLogoutSuccessHandler"/>
+            <Class name="cn.org.wang.exam.filter.IpBlacklistFilter"/>
+            <Class name="cn.org.wang.exam.websocket.WebsocketHandler"/>
+        </Or>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- 过滤 Aspect 切面类中的依赖注入 -->
+    <Match>
+        <Package name="~cn\.org\.wang\.exam\.aspect\..*"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- 过滤 Quartz Job 类中的依赖注入 -->
+    <Match>
+        <Package name="~cn\.org\.wang\.exam\.quartz\..*"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- 过滤 Captcha 工具类中的依赖注入 -->
+    <Match>
+        <Package name="~cn\.org\.wang\.exam\.utils\.captcha\..*"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- 过滤 Mail 工具类中的依赖注入 -->
+    <Match>
+        <Package name="~cn\.org\.wang\.exam\.utils\.mail\..*"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- 过滤 ExcelClassField setter 的 EI_EXPOSE_REP2（数据绑定需要） -->
+    <Match>
+        <Class name="cn.org.wang.exam.utils.excel.ExcelClassField"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- 过滤 Security 工具类 -->
+    <Match>
+        <Package name="~cn\.org\.wang\.exam\.utils\.security\..*"/>
+        <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- 过滤 Compatibility 工具类 -->
+    <Match>
+        <Package name="~cn\.org\.wang\.exam\.utils\.compatibility\..*"/>
+        <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- 过滤 File 工具类 -->
+    <Match>
+        <Package name="~cn\.org\.wang\.exam\.utils\.file\..*"/>
+        <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- 过滤 Common 基础类 -->
+    <Match>
+        <Package name="~cn\.org\.wang\.exam\.common\..*"/>
+        <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- 过滤 Filter 过滤器类 -->
+    <Match>
+        <Package name="~cn\.org\.wang\.exam\.filter\..*"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- 过滤 Handler 处理器类 -->
+    <Match>
+        <Package name="~cn\.org\.wang\.exam\.handler\..*"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- 过滤 WebSocket 类 -->
+    <Match>
+        <Package name="~cn\.org\.wang\.exam\.websocket\..*"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- 过滤 Task 任务类 -->
+    <Match>
+        <Package name="~cn\.org\.wang\.exam\.task\..*"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- 过滤 Mapper 接口 -->
+    <Match>
+        <Package name="~cn\.org\.wang\.exam\.mapper\..*"/>
+        <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- 过滤 Converter 转换器类 -->
+    <Match>
+        <Package name="~cn\.org\.wang\.exam\.converter\..*"/>
+        <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+    </Match>
+</FindBugsFilter>

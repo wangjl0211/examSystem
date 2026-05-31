@@ -1,0 +1,89 @@
+// 修复el-select组件的样式问题，确保文本内容完全可见
+
+// 确保选择器有足够的宽度来显示文本
+.el-select {
+  width: 100%; // 默认宽度为100%
+  min-width: 120px; // 设置最小宽度
+  
+  // 响应式调整
+  @media screen and (max-width: 768px) {
+    width: 100%; // 在小屏幕上始终使用100%宽度
+  }
+}
+
+// 确保选择器包装器正确显示
+.el-select__wrapper {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+// 确保选择区域有足够的空间显示文本
+.el-select__selection {
+  width: 100%;
+  min-height: 32px; // 设置最小高度
+  display: flex;
+  align-items: center;
+  overflow: visible; // 确保内容不被隐藏
+}
+
+// 确保输入框和占位符正确显示
+.el-select__input-wrapper {
+  flex: 1;
+  min-width: 0;
+  
+  .el-select__input {
+    width: 100% !important;
+    min-width: 0;
+    overflow: visible;
+    text-overflow: clip; // 防止文本被截断
+  }
+}
+
+// 确保占位符文本完全可见
+.el-select__placeholder {
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: clip;
+  max-width: 100%;
+  flex: 1;
+  min-width: 0;
+}
+
+// 确保已选择项正确显示
+.el-select__selected-item {
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: clip;
+  max-width: 100%;
+  flex: 1;
+  min-width: 0;
+}
+
+// 确保下拉菜单正确显示
+.el-select-dropdown {
+  width: 100%;
+  min-width: 120px;
+  
+  .el-select-dropdown__item {
+    white-space: nowrap;
+    overflow: visible;
+    text-overflow: clip;
+    padding: 0 20px;
+  }
+}
+
+// 确保多选模式下的标签正确显示
+.el-select__tags {
+  width: 100%;
+  min-height: 32px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  
+  .el-select__tag {
+    margin: 2px 4px 2px 0;
+    white-space: nowrap;
+    overflow: visible;
+    text-overflow: clip;
+  }
+}

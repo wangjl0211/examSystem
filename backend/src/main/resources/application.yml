@@ -1,0 +1,142 @@
+spring:
+  application:
+    # 服务名
+    name: exam
+  # 加载本地配置文件
+  config:
+    import: optional:file:local-config.yml
+  profiles:
+    # 使用那个配置文件
+    active: dev # dev开发环境配置/prod生产环境配置
+
+  
+  # ========== Redis 配置 ==========
+  data:
+    redis:
+      # Redis 服务器地址
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      # 数据库索引 (0-15)
+      database: ${REDIS_DATABASE:0}
+      # 密码（如果没有密码，可以删除或留空）
+      password: ${REDIS_PASSWORD:}
+      
+      # 连接超时设置（Redis 7.0+ 建议调整）
+      timeout: ${REDIS_TIMEOUT:5000ms}
+      connect-timeout: ${REDIS_CONNECT_TIMEOUT:2000ms}
+      
+      # Lettuce 连接池配置
+      lettuce:
+        pool:
+          enabled: true
+          # 最大连接数
+          max-active: ${REDIS_MAX_ACTIVE:8}
+          # 最大空闲连接
+          max-idle: ${REDIS_MAX_IDLE:8}
+          # 最小空闲连接
+          min-idle: ${REDIS_MIN_IDLE:0}
+          # 获取连接最大等待时间（-1表示无限等待）
+          max-wait: ${REDIS_MAX_WAIT:-1ms}
+          # 空闲连接检查间隔
+          time-between-eviction-runs: ${REDIS_EVICTION_RUNS:30000ms}
+
+  # ========== 邮件发送配置 ==========
+  mail:
+    # 邮件服务器主机地址（QQ邮箱：smtp.qq.com，163邮箱：smtp.163.com）
+    host: ${MAIL_HOST:smtp.qq.com}
+    # 587（TLS加密）- 核心端口
+    port: 587 
+    # 邮箱用户名（替换为你的QQ邮箱）
+    username: ${MAIL_USERNAME}
+    # 全局发件人别名
+    send-nickname:  ${SEND_NICKNAME}
+    # 邮箱密码（SMTP授权码，不是登录密码）
+    password: ${SECRET_MAIL_PASSWORD}
+    # 默认编码
+    default-encoding: UTF-8
+    # SMTP相关配置（重点优化）
+    properties:
+      mail:
+        smtp:
+          # 开启认证（必须）
+          auth: true
+          # 开启STARTTLS（587端口核心）
+          starttls:
+            enable: true
+            required: true
+          # 显式禁用SSL（避免和STARTTLS冲突）
+          ssl:
+            enable: false
+            required: false
+          # 超时时间优化（延长至10秒，解决阿里云ECS连接超时）
+          connectiontimeout: 10000
+          timeout: 10000
+          writetimeout: 10000
+          # 阿里云ECS优化：绑定本地地址，提升连接稳定性
+          localaddress: 0.0.0.0
+          # 重试机制（可选，增加容错）
+          retry: true
+        # 开启调试日志（排查问题用，生产环境可关闭）
+        debug: true
+# ========== 自定义 Redis 配置 ==========
+redis:
+  # 缓存过期时间配置（单位：秒）
+  cache:
+    # 默认缓存过期时间
+    default-expire: 3600
+    # 用户相关缓存
+    user-expire: 1800
+    # token相关缓存
+    token-expire: 7200
+    # 验证码缓存
+    captcha-expire: 300
+    # 配置缓存
+    config-expire: 86400
+
+  # 文件上传配置        
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 50MB   # 调整为适合业务需求的大小
+  # Spring Security配置
+  security:
+    user:
+      name: ${SECURITY_USERNAME:user}
+      password: ${SECRET_SECURITY_PASSWORD:123456}
+
+# 匿名访问路径（SecurityConfig 与 VerifyTokenFilter 共用）
+security:
+  public:
+    paths:
+      # 仅开放登录/注册/验证码/找回密码；track-presence、logout 需携带 Token
+      - /api/auths/register
+      - /api/auths/captcha/slide/create
+      - /api/auths/captcha/slide/verify
+      - /api/auths/forgot-password/**
+      - /auths/register
+      - /auths/captcha/slide/create
+      - /auths/captcha/slide/verify
+      - /auths/forgot-password/**
+      - /api/user/login
+      - /api/admin/login
+      - /webjars/**
+      - /swagger-ui/**
+      - /swagger-ui.html
+      - /v3/api-docs/**
+      - /doc.html
+      - /ws/**
+      - /ws-app/**
+      - /api/exams/server-time
+      - /api/teacher/check-cert
+      - /teacher/check-cert
+
+# ========== 滑块验证码配置 ==========
+captcha:
+  slide:
+    enabled: true
+    image-path: classpath:images/captcha/
+    tolerance: 5
+    expire-time: 300
+    rate-limit: 60
+    max-failures: 5
+

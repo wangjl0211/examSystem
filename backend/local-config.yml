@@ -1,0 +1,97 @@
+# 本地配置文件
+# 用于替代环境变量和默认配置
+
+# 服务器配置
+server:
+  port: 8080
+
+# 应用配置
+spring:
+  application:
+    name: exam
+  
+  # 数据库配置
+  datasource:
+    url: ${LOCAL_DB_URL:jdbc:mysql://localhost:3306/db_exam?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf8}
+    username: ${LOCAL_DB_USERNAME:root}
+    password: ${SECRET_LOCAL_DB_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  
+  # Redis配置 - 本地开发环境
+  data:
+    redis:
+      database: ${LOCAL_REDIS_DATABASE:2}  # 本地开发使用数据库2
+      host: ${LOCAL_REDIS_HOST:localhost}
+      port: ${LOCAL_REDIS_PORT:6379}
+      password: ${SECRET_LOCAL_REDIS_PASSWORD:}  # 本地通常无密码
+      timeout: 5s  # 本地环境减少超时时间
+      connect-timeout: 1000ms
+      lettuce:
+        pool:
+          max-active: 6  # 本地减少连接数
+          max-wait: 5000ms  # 本地设置等待时间
+          max-idle: 4
+          min-idle: 0
+          time-between-eviction-runs: 60000ms
+
+  # 主配置
+  main:
+    banner-mode: console
+    allow-circular-references: true
+  
+  # 文件上传配置        
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 50MB   # 调整为适合业务需求的大小
+
+# MybatisPlus配置
+mybatis-plus:
+  global-config:
+    banner: false
+    db-config:
+      logic-not-delete-value: 0
+      logic-delete-value: 1
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+  type-aliases-package: cn.org.wang.exam.model
+
+# JWT配置
+jwt:
+  secret: ${SECRET_LOCAL_JWT_KEY}
+  expiration: ${LOCAL_JWT_EXPIRATION:1800000}
+  refreshThreshold: ${LOCAL_JWT_REFRESH_THRESHOLD:900000}
+
+# 阿里云OSS配置
+oss:
+  endpoint: ${LOCAL_OSS_ENDPOINT:https://oss-cn-beijing.aliyuncs.com}
+  access-key-id: ${SECRET_LOCAL_OSS_ACCESS_KEY_ID}
+  access-key-secret: ${SECRET_LOCAL_OSS_ACCESS_KEY_SECRET}
+  bucket-name: ${LOCAL_OSS_BUCKET_NAME:online-exam-system-backend}
+
+# Minio配置
+minio:
+  endpoint: ${LOCAL_MINIO_ENDPOINT:http://localhost:9000}
+  accesskey: ${SECRET_LOCAL_MINIO_ACCESS_KEY:admin}
+  secretKey: ${SECRET_LOCAL_MINIO_SECRET_KEY}
+  bucket: ${LOCAL_MINIO_BUCKET:online-exam}
+
+
+
+# 日志配置
+logging:
+  level:
+    root: info
+    com.example: debug
+
+# 自定义配置
+online-exam:
+  storage:
+    type: minio
+  login:
+    captcha:
+      enabled: true
+system:
+  register:
+    enabled: true

@@ -1,0 +1,15 @@
+/**
+ * SCSS 混入转发模块
+ *
+ * 该文件使用 @forward 指令将 mixin.scss 中的所有定义转发到当前模块
+ *
+ * @forward 与 @import 的区别:
+ * - @import: 直接导入样式（会导致样式重复打包）
+ * - @forward: 转发定义（保持模块化，便于维护）
+ *
+ * 使用方式:
+ * 在其他 SCSS 文件中使用 @use 'mixins.scss' 后，可以直接使用其中定义的 mixin
+ *
+ * @see mixin.scss - 查看实际的 mixin 定义
+ */
+@forward 'mixin.scss';

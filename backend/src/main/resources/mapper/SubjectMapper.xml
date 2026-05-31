@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.org.wang.exam.mapper.SubjectMapper">
+
+    <!-- 获取所有课程 -->
+    <select id="getAllSubject" resultType="cn.org.wang.exam.model.vo.subject.SubjectVO">
+        select g.id, g.subject_name AS subjectName, g.user_id AS userId, u.real_name AS userName,
+        <if test="roleCode == 0 or roleCode == 1">
+            g.code,
+        </if>
+        <if test="roleCode == 2">
+            null as code,
+        </if>
+        (SELECT COUNT(*) FROM t_user_subject ks JOIN t_user k ON ks.user_id = k.id WHERE ks.subject_id = g.id AND ks.is_deleted = 0 AND k.is_deleted = 0 AND k.id != g.user_id) AS subjectCount,
+        g.create_time AS createTime,
+        (SELECT ks.join_time FROM t_user_subject ks WHERE ks.subject_id = g.id AND ks.user_id = #{userId} AND ks.is_deleted = 0) AS joinTime
+        from t_subject g
+        left join t_user u on g.user_id = u.id
+        where g.is_deleted = 0
+        <if test="roleCode == 2 or roleCode == 1">
+            <if test="subjectIdList != null and subjectIdList.size() > 0">
+                and g.id in
+                <foreach collection="subjectIdList" item="gId" open="(" separator="," close=")">
+                    #{gId}
+                </foreach>
+            </if>
+            <if test="subjectIdList == null or subjectIdList.size() == 0">
+                and g.id = -1
+            </if>
+        </if>
+    </select>
+
+    <!-- 分页获取课程 -->
+    <select id="selectSubjectPage" resultType="cn.org.wang.exam.model.vo.subject.SubjectVO">
+        select g.id, g.subject_name AS subjectName, g.user_id AS userId, u.real_name AS userName,
+        <if test="roleCode == 0 or roleCode == 1">
+            g.code,
+        </if>
+        <if test="roleCode == 2">
+            null as code,
+        </if>
+        (SELECT COUNT(*) FROM t_user_subject ks JOIN t_user k ON ks.user_id = k.id WHERE ks.subject_id = g.id AND ks.is_deleted = 0 AND k.is_deleted = 0 AND k.id != g.user_id) AS subjectCount,
+        g.create_time AS createTime,
+        (SELECT ks.join_time FROM t_user_subject ks WHERE ks.subject_id = g.id AND ks.user_id = #{userId} AND ks.is_deleted = 0) AS joinTime
+        from t_subject g
+        left join t_user u on g.user_id = u.id
+        where g.is_deleted = 0
+        <!-- 课程名称模糊匹配查询 -->
+        <if test="subjectName != null and subjectName != ''">
+            and g.subject_name LIKE CONCAT('%', #{subjectName}, '%')
+        </if>
+        <!-- 创建用户姓名精确匹配查询 -->
+        <if test="userName != null and userName != ''">
+            and u.real_name = #{userName}
+        </if>
+        <!-- 创建日期查询当日创建的课程 -->
+        <if test="createDate != null and createDate != ''">
+            and date(g.create_time) = #{createDate}
+        </if>
+        <!-- 角色权限控制 -->
+        <if test="roleCode == 2 or roleCode == 1">
+            <if test="subjectIdList != null and subjectIdList.size() > 0">
+                and g.id in
+                <foreach collection="subjectIdList" item="gId" open="(" separator="," close=")">
+                    #{gId}
+                </foreach>
+            </if>
+            <if test="subjectIdList == null or subjectIdList.size() == 0">
+                and g.id = -1
+            </if>
+        </if>
+    </select>
+
+    <!-- 获取课程详情 -->
+    <select id="getSubjectById" resultType="cn.org.wang.exam.model.entity.Subject">
+        select id, subject_name, user_id, code, create_time
+        from t_subject
+        where id = #{id} and is_deleted = 0
+    </select>
+
+    <!-- 获取课程用户列表 -->
+    <select id="getSubjectUsers" resultType="cn.org.wang.exam.model.vo.subject.SubjectUserVO">
+        select u.id as userId, u.user_no as userNo, u.real_name as realName, us.join_time as joinTime
+        from t_user_subject us
+        left join t_user u on us.user_id = u.id
+        where us.subject_id = #{subjectId} and us.is_deleted = 0 and u.is_deleted = 0
+        order by us.join_time desc
+    </select>
+
+    <!-- 根据课程代码获取课程 -->
+    <select id="getSubjectByCode" resultType="cn.org.wang.exam.model.entity.Subject">
+        select id, subject_name, user_id, code, create_time
+        from t_subject
+        where code = #{code} and is_deleted = 0
+    </select>
+
+    <!-- 根据用户ID和课程名称查询课程记录（包括逻辑删除的记录） -->
+    <select id="getSubjectByUserAndName" resultType="cn.org.wang.exam.model.entity.Subject">
+        select id, subject_name, user_id, code, create_time, is_deleted
+        from t_subject
+        where user_id = #{userId} and subject_name = #{subjectName}
+    </select>
+
+    <!-- 恢复逻辑删除的课程 -->
+    <update id="restoreDeletedSubject">
+        UPDATE t_subject
+        SET is_deleted = 0, user_id = #{userId}, code = #{code}
+        WHERE id = #{id}
+    </update>
+    
+    <!-- 根据创建者ID获取课程ID列表 -->
+    <select id="getSubjectIdListByCreatorId" resultType="java.lang.Integer">
+        SELECT id FROM t_subject
+        WHERE user_id = #{creatorId} AND is_deleted = 0
+    </select>
+
+</mapper>
+

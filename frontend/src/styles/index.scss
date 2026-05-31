@@ -1,0 +1,196 @@
+/**
+ * 全局样式入口文件
+ *
+ * 该文件是前端样式系统的入口文件，通过 @use 指令按顺序导入各个样式模块
+ * 使用 @use 而非 @import 的优势:
+ * 1. 模块化: 每个样式文件独立作用域，避免变量冲突
+ * 2. 按需加载: 只导入使用的样式，减少打包体积
+ * 3. 可维护性: 便于管理和扩展样式模块
+ *
+ * 样式加载顺序说明:
+ * 1. variables.scss - 变量定义（其他文件依赖）
+ * 2. mixin.scss - 混入定义（工具函数）
+ * 3. transition.scss - 过渡动画
+ * 4. element-ui.scss - Element Plus 组件样式覆盖
+ * 5. sidebar.scss - 侧边栏样式
+ * 6. button.scss - 按钮样式
+ * 7. select.scss - 选择器样式
+ * 8. responsive.scss - 响应式布局样式
+ */
+
+/**
+ * 样式模块导入
+ * 使用 @use 替代 @import 实现模块化
+ */
+
+// 变量定义 - 定义颜色、尺寸等全局变量
+@use 'variables.scss';
+
+// 混入模块 - 可重用的样式代码块
+@use 'mixin.scss';
+
+// 过渡动画 - 页面切换和元素显示隐藏的动画效果
+@use 'transition.scss';
+
+// Element Plus 组件样式覆盖 - 重置和优化第三方组件默认样式
+@use 'element-ui.scss';
+
+// 侧边栏样式 - 左侧导航菜单的样式定义
+@use 'sidebar.scss';
+
+// 按钮样式 - 全局按钮组件样式增强
+@use 'button.scss';
+
+// 选择器样式 - 下拉选择框等样式优化
+@use 'select.scss';
+
+// 响应式布局 - 不同屏幕尺寸下的布局适配
+@use 'responsive.scss';
+
+/*! upgrade-restore: 全局样式已从原始项目恢复 */
+
+/**
+ * 全局字体平滑设置
+ *
+ * 提升文字渲染的清晰度，特别是在 Retina 显示屏上
+ * -webkit-font-smoothing: 抗锯齿渲染
+ * -moz-osx-font-smoothing: Firefox 在 Mac 上的灰度平滑
+ */
+body {
+  height: 100%;
+  -moz-osx-font-smoothing: grayscale;     // Firefox Mac 灰度平滑
+  -webkit-font-smoothing: antialiased;   // WebKit 抗锯齿
+  text-rendering: optimizeLegibility;    // 文字渲染优化
+  font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;  // 跨平台中文字体栈
+}
+
+/**
+ * 表单标签样式
+ *
+ * 设置标签文字加粗，提高表单可读性
+ */
+label {
+  font-weight: 700;  // 标签文字加粗
+}
+
+/**
+ * HTML 根元素样式
+ *
+ * 设置基础布局参数
+ */
+html {
+  height: 100%;
+  box-sizing: border-box;  // 使用 border-box 模型，便于计算尺寸
+}
+
+/**
+ * 应用根元素
+ *
+ * #app 是 Vue 应用的挂载点
+ */
+#app {
+  height: 100%;  // 占满父容器高度
+}
+
+/**
+ * 全局 box-sizing 重置
+ *
+ * 确保所有元素使用 border-box 模型
+ * &::before 和 &::after 伪元素也继承该设置
+ */
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+/**
+ * 链接元素焦点样式
+ *
+ * 移除链接点击时的默认轮廓
+ * 提高键盘可访问性同时保持视觉整洁
+ */
+a:focus,
+a:active {
+  outline: none;
+}
+
+/**
+ * 链接元素通用样式
+ *
+ * 统一定义链接的外观和行为
+ */
+a,
+a:focus,
+a:hover {
+  cursor: pointer;              // 显示手型光标
+  color: inherit;                // 继承父元素颜色
+  text-decoration: none;         // 移除下划线
+}
+
+/**
+ * div 元素焦点样式
+ *
+ * 移除 div 点击时的默认轮廓
+ */
+div:focus {
+  outline: none;
+}
+
+/**
+ * 清除浮动工具类
+ *
+ * 使用伪元素实现清除浮动效果
+ * 原理: 在容器末尾添加一个使用 clear: both 的伪元素
+ */
+.clearfix {
+  &:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+  }
+}
+
+/**
+ * 应用容器样式
+ *
+ * 主要内容区域的容器样式
+ * 提供一致的内边距
+ */
+.app-container {
+  padding: 30px;  // 容器内边距
+}
+
+/**
+ * 分页组件容器样式
+ *
+ * 为表格底部的分页器提供背景和间距
+ */
+.pagination-container {
+  background: #fff;      // 白色背景
+  padding: 32px 16px;    // 内边距
+}
+
+/**
+ * 表格单元格样式
+ *
+ * 限制单元格内容显示行数，超出部分用省略号表示
+ * 实现单行或双行截断效果
+ */
+.el-table .cell {
+  display: -webkit-box;              // 使用弹性盒模型
+  -webkit-box-orient: vertical;      // 垂直排列
+  -webkit-line-clamp: 2;             // 最多显示2行
+  line-clamp: 2;                     // 标准属性，实现兼容性
+  overflow: hidden;                   // 超出部分隐藏
+  text-overflow: ellipsis;            // 超出文字显示省略号
+}
+/**
+ * 登录/注册页面背景样式
+ */
+.login-container {
+  background: linear-gradient(135deg, #304156   0%, #304156 100%);
+}

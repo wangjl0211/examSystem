@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.org.wang.exam.mapper.UserMapper">
+
+    <sql id="simpleFiled">
+        u.id,u.user_no,u.real_name,u.avatar,u.role_id
+    </sql>
+
+    <!-- 批量添加用户 -->
+    <insert id="insertBatchUser">
+        insert into t_user
+        values
+        <foreach collection="list" item="user" separator=",">
+            (null,#{user.userNo},#{user.realName},#{user.password},
+            #{user.teacherCertNo},#{user.roleId},#{user.createTime},1,0,#{user.avatar})
+        </foreach>
+    </insert>
+
+    <!-- 批量移除课程 -->
+    <delete id="removeUsersubject">
+        DELETE FROM t_user_subject
+        WHERE user_id IN
+        <foreach item="userId" collection="userIds" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </delete>
+
+    <!-- 用户退出课程 -->
+    <delete id="userExitsubject">
+        DELETE FROM t_user_subject
+        WHERE user_id = #{userId}
+    </delete>
+
+    <!-- 获取用户信息 -->
+    <select id="info" resultType="cn.org.wang.exam.model.vo.user.UserVO">
+        select
+        <include refid="simpleFiled"/>
+        from t_user u
+        where u.id = #{userId}
+    </select>
+    
+    <!-- 获取管理员信息 -->
+    <select id="getAdminInfo" resultType="cn.org.wang.exam.model.vo.user.UserVO">
+        select 
+        a.id,
+        a.admin_name as userNo,
+        a.admin_name as realName,
+        a.avatar,
+        a.role_id as roleId
+        from t_admin a
+        where a.id = #{userId}
+    </select>
+
+
+    <!-- 分页获取用户信息 -->
+    <select id="pagingUser" resultType="cn.org.wang.exam.model.vo.user.UserVO">
+        select u.id,
+        u.user_no as userNo,
+        u.real_name as realName,
+        u.role_id as roleId,
+        u.avatar,
+        u.create_time as createTime
+        from t_user as u
+        <trim prefixOverrides="and" prefix="where">
+            u.is_deleted = 0
+            <!-- 学号/工号模糊匹配查询 -->
+            <if test='userNo != null and userNo !=""'>
+                and u.user_no like concat('%',#{userNo},'%')
+            </if>
+            <!-- 姓名模糊匹配查询 -->
+            <if test='realName != null and realName !=""'>
+                and u.real_name like concat('%',#{realName},'%')
+            </if>
+            <!-- 按注册日期查询当日注册用户 -->
+            <if test='createDate != null and createDate !=""'>
+                and date(u.create_time) = #{createDate}
+            </if>
+            <!-- 角色分类查询 -->
+            <if test="roleId != null and roleId != 0">
+                and u.role_id = #{roleId}
+            </if>
+            <!-- 查询角色Id条件 -->
+            <if test="queryRoleId != null and queryRoleId == 1">
+                and u.role_id = 1
+            </if>
+            <if test="queryRoleId == null ">
+                and u.role_id in(1,2,3)
+            </if>
+        </trim>
+        order by u.create_time desc
+    </select>
+
+    <select id="stuExamPage">
+        SELECT *
+        FROM t_user
+        WHERE id in (SELECT user_id FROM t_user_subject WHERE subject_id in (SELECT subject_id FROM t_exam_subject WHERE exam_id= #{exam_id}))
+    </select>
+
+    <!-- 获得管理员ID列表 -->
+    <select id="getAdminList" resultType="java.lang.Integer">
+        select id from t_user where role_id = 3
+    </select>
+
+    <!-- 查询指定前缀的最大用户编号，包括逻辑删除的记录 -->
+    <select id="selectMaxUserNo" resultType="cn.org.wang.exam.model.entity.User">
+        select * from t_user
+        where role_id = #{roleId}
+        and user_no like concat(#{prefix}, '%')
+        order by user_no desc
+        limit 1
+    </select>
+
+</mapper>
+

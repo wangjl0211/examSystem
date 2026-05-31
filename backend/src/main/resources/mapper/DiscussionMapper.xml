@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.org.wang.exam.mapper.DiscussionMapper">
+
+    <select id="selectOwnerPage" resultType="cn.org.wang.exam.model.vo.discussion.PageDiscussionVo">
+        select d.id,d.title,u.real_name as sender,g.subject_name as subjectName,d.create_time
+        from t_discussion as d
+        join t_user as u on d.user_id = u.id
+        join t_subject as g on d.subject_id = g.id
+        <trim prefix="where" prefixOverrides="and">
+            d.user_id = #{userId}
+            <if test='title != null and title != ""'>
+                and d.title like concat('%',#{title},'%')
+            </if>
+            <if test='subjectId != 0 and subjectId != null'  >
+                and d.subject_id = #{subjectId}
+            </if>
+        </trim>
+        order by d.create_time desc
+    </select>
+    <select id="selectDetail" resultType="cn.org.wang.exam.model.vo.discussion.DiscussionDetailVo">
+        select d.id,d.title,u.real_name as sender,d.content,g.subject_name,d.create_time
+        from t_discussion as d
+        join t_user as u on d.user_id = u.id
+        join t_subject as g on d.subject_id = g.id
+        where d.id = #{id}
+    </select>
+    <select id="selectDiscussionBysubjectPage"
+            resultType="cn.org.wang.exam.model.vo.discussion.PageDiscussionVo">
+        select d.id,d.title,u.real_name as sender,g.subject_name as subjectName,d.create_time
+        from t_discussion as d
+        join t_user as u on d.user_id = u.id
+        join t_subject as g on d.subject_id = g.id
+        <trim prefix="where" prefixOverrides="and">
+            <if test='title != null and title != ""'>
+                and d.title like concat('%',#{title},'%')
+            </if>
+            and d.subject_id = #{subjectId}
+        </trim>
+        order by d.create_time desc
+    </select>
+    
+    <select id="selectAllDiscussionPage"
+            resultType="cn.org.wang.exam.model.vo.discussion.PageDiscussionVo">
+        select d.id,d.title,u.real_name as sender,g.subject_name as subjectName,d.create_time
+        from t_discussion as d
+        join t_user as u on d.user_id = u.id
+        join t_subject as g on d.subject_id = g.id
+        <trim prefix="where" prefixOverrides="and">
+            <if test='title != null and title != ""'>
+                and d.title like concat('%',#{title},'%')
+            </if>
+        </trim>
+        order by d.create_time desc
+    </select>
+    
+    <select id="selectStudentDiscussionPage"
+            resultType="cn.org.wang.exam.model.vo.discussion.PageDiscussionVo">
+        select d.id,d.title,u.real_name as sender,g.subject_name as subjectName,d.create_time
+        from t_discussion as d
+        join t_user as u on d.user_id = u.id
+        join t_subject as g on d.subject_id = g.id
+        join t_user_subject as us on d.subject_id = us.subject_id
+        <trim prefix="where" prefixOverrides="and">
+            us.user_id = #{userId}
+            and us.is_deleted = 0
+            <if test='title != null and title != ""'>
+                and d.title like concat('%',#{title},'%')
+            </if>
+        </trim>
+        order by d.create_time desc
+    </select>
+    
+    <delete id="deleteBySubjectId">
+        delete from t_discussion
+        where subject_id = #{subjectId}
+    </delete>
+</mapper>

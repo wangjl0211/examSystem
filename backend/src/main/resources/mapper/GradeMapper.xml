@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.org.wang.exam.mapper.SubjectMapper">
+
+    <select id="countAllsubjects" resultType="long">
+        SELECT COUNT(*) FROM t_subject
+    </select>
+
+    <select id="getsubjectCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM t_subject WHERE id in (SELECT subject_id FROM t_exam_subject WHERE exam_id= #{exam_id})
+    </select>
+
+    <!-- 分页查找课程 -->
+    <select id="selectsubjectPage" resultType="cn.org.wang.exam.model.vo.subject.SubjectVO">
+        SELECT
+        g.id,
+        g.subject_name AS subjectName,
+        g.user_id AS userId,
+        u.real_name AS userName,
+        g.code,
+        (SELECT COUNT(*) FROM t_user_subject ks JOIN t_user k ON ks.user_id = k.id WHERE ks.subject_id = g.id AND k.is_deleted = 0) AS subjectCount
+        FROM t_subject g
+        JOIN t_user u ON g.user_id = u.id
+        <where>
+            <!--课程未删除的-->
+            g.is_deleted = 0
+            <!--查询课程名-->
+            <if test="subjectName != null and subjectName != ''">
+                AND g.subject_name LIKE CONCAT('%', #{subjectName}, '%')
+            </if>
+            <if test="roleCode == 2 or roleCode == 1">
+                <if test="subjectIdList != null and subjectIdList.size() > 0">
+                    and g.id IN
+                    <foreach collection="subjectIdList" item="gId" open="(" separator="," close=")">
+                        #{gId}
+                    </foreach>
+                </if>
+                <!-- 当 subjectIdList 为空时，添加一个条件使得结果为空 -->
+                <if test="subjectIdList == null or subjectIdList.size() == 0">
+                    and 1=3
+                </if>
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据课程代码获取课程对象 -->
+    <select id="getsubjectByCode" resultType="cn.org.wang.exam.model.entity.Subject">
+        select *
+        from t_subject
+        where
+        code = #{code}
+    </select>
+
+    <!-- 获得所有课程 -->
+    <select id="getAllsubject" resultType="cn.org.wang.exam.model.vo.subject.SubjectVO">
+        select g.id, g.subject_name AS subjectName, g.user_id AS userId, u.real_name AS userName, g.code,
+        (SELECT COUNT(*) FROM t_user_subject ks JOIN t_user k ON ks.user_id = k.id WHERE ks.subject_id = g.id AND k.is_deleted = 0) AS subjectCount
+        from t_subject g
+        JOIN t_user u ON g.user_id = u.id
+        <if test="roleCode == 2 or roleCode == 1">
+            right join t_user_subject ug on ug.subject_id = g.id
+        </if>
+        <where>
+            g.is_deleted = 0
+            <if test="roleCode == 2 or roleCode == 1">
+                <if test="subjectIdList != null and subjectIdList.size() > 0">
+                    and g.id IN
+                    <foreach collection="subjectIdList" item="gId" open="(" separator="," close=")">
+                        #{gId}
+                    </foreach>
+                </if>
+                <!-- 当 subjectIdList 为空时，添加一个条件使得结果为空 -->
+                <if test="subjectIdList == null or subjectIdList.size() == 0">
+                    and 1=3
+                </if>
+            </if>
+        </where>
+    </select>
+
+</mapper>
+

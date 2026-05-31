@@ -1,0 +1,39 @@
+/**
+ * 考试/试卷预览页公共布局样式
+ */
+
+.exam-layout-answer-card {
+  height: 100%;
+  .card-title {
+    font-weight: bold;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e6e6e6;
+  }
+  .card-subtitle {
+    font-size: 14px;
+    color: #666;
+    margin: 8px 0;
+  }
+  .answer-card-content {
+    flex: 1;
+    overflow-y: auto;
+    margin-top: 10px;
+  }
+}
+
+.exam-layout-questions-container {
+  height: 100%;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.exam-layout-scrollbar {
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #c0c4cc;
+    border-radius: 3px;
+  }
+}

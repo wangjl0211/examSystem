@@ -1,0 +1,94 @@
+/**
+ * 侧边栏样式变量（用于 JavaScript 导出）
+ *
+ * 该文件是 variables.scss 的副本，增加了 :export 块
+ * 通过 CSS Modules 机制将 SCSS 变量导出给 JavaScript 使用
+ * 主要用于 Vue 组件中动态读取颜色值（如设置菜单背景色）
+ */
+
+// ============================================
+// 菜单文字颜色
+// ============================================
+
+/**
+ * 普通菜单项文字颜色
+ * 用途: 未选中状态下的菜单文字显示
+ */
+$menuText:#bfcbd9;
+
+/**
+ * 当前激活菜单项的文字颜色
+ * 用途: 鼠标悬停或选中时的菜单文字高亮
+ */
+$menuActiveText:#409EFF;
+
+/**
+ * 子菜单激活文字颜色
+ * 用途: 二级菜单选中时的文字颜色
+ *
+ * @see https://github.com/ElemeFE/element/issues/12951 - Element UI issue regarding submenu text color
+ */
+$subMenuActiveText:#f4f4f5;
+
+// ============================================
+// 菜单背景颜色
+// ============================================
+
+/**
+ * 主菜单背景颜色
+ * 用途: 侧边栏整体背景色
+ */
+$menuBg:#304156;
+
+/**
+ * 菜单项鼠标悬停背景色
+ * 用途: 鼠标悬停在菜单项上时的背景高亮
+ */
+$menuHover:#263445;
+
+// ============================================
+// 子菜单背景颜色
+// ============================================
+
+/**
+ * 子菜单背景颜色
+ * 用途: 二级菜单（子菜单）的背景色
+ */
+$subMenuBg:#1f2d3d;
+
+/**
+ * 子菜单悬停背景颜色
+ * 用途: 鼠标悬停在子菜单项上时的背景高亮
+ */
+$subMenuHover:#001528;
+
+// ============================================
+// 布局尺寸变量
+// ============================================
+
+/**
+ * 侧边栏展开时的宽度
+ * 用途: 控制侧边栏展开状态下的宽度，同时影响子菜单最小宽度
+ */
+$sideBarWidth: 210px;
+
+/**
+ * CSS Modules 导出配置
+ *
+ * 将 SCSS 变量导出为 JavaScript 可访问的键值对
+ * 导出后可在 Vue 组件中通过 import variables from '@/styles/variables.module.scss' 访问
+ *
+ * 使用示例:
+ * import variables from '@/styles/variables.module.scss'
+ * <el-menu :background-color="variables.menuBg" />
+ */
+:export {
+  menuText: $menuText;
+  menuActiveText: $menuActiveText;
+  subMenuActiveText: $subMenuActiveText;
+  menuBg: $menuBg;
+  menuHover: $menuHover;
+  subMenuBg: $subMenuBg;
+  subMenuHover: $subMenuHover;
+  sideBarWidth: $sideBarWidth;
+}

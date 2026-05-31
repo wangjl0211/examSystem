@@ -1,0 +1,123 @@
+/**
+ * 全局过渡动画样式
+ *
+ * 该文件定义了系统中使用的各种过渡动画效果
+ * 主要包括:
+ * 1. 淡入淡出效果 - opacity 变化
+ * 2. 淡入淡出+位移效果 - opacity + transform 组合
+ * 3. 面包屑导航动画
+ *
+ * 使用 Vue 的 <transition> 组件配合这些类名实现动画
+ */
+
+// ============================================
+// 淡入淡出效果
+// ============================================
+
+/**
+ * 基础淡入淡出动画
+ *
+ * 功能: 元素显示和隐藏时的透明度过渡
+ * 使用方式:
+ * <transition name="fade">
+ *   <div v-if="show">内容</div>
+ * </transition>
+ *
+ * 动画说明:
+ * - fade-enter-active: 淡入过程中
+ * - fade-leave-active: 淡出过程中
+ * - fade-enter: 起始状态（透明）
+ * - fade-leave-to: 结束状态（透明）
+ */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.28s;  // 透明度过渡，时长 0.28 秒
+}
+
+.fade-enter,
+.fade-leave-active {
+  opacity: 0;  // 起始和结束状态都是完全透明
+}
+
+// ============================================
+// 淡入淡出+位移效果
+// ============================================
+
+/**
+ * 淡入淡出+水平位移动画
+ *
+ * 功能: 元素显示时从左侧滑入并淡入，隐藏时向右侧滑出并淡出
+ * 使用方式:
+ * <transition name="fade-transform">
+ *   <component :is="Component" />
+ * </transition>
+ *
+ * 典型应用: 路由切换时的页面过渡动画
+ *
+ * 动画说明:
+ * - 进入: 从左侧 -30px 位置淡入到当前位置
+ * - 离开: 从当前位置向右侧 30px 位置淡出
+ */
+.fade-transform-leave-active,
+.fade-transform-enter-active {
+  transition: all .5s;  // 所有属性过渡，时长 0.5 秒
+}
+
+.fade-transform-enter {
+  opacity: 0;                           // 起始透明度为 0
+  transform: translateX(-30px);          // 起始位置向左偏移 30px
+}
+
+.fade-transform-leave-to {
+  opacity: 0;                           // 结束透明度为 0
+  transform: translateX(30px);           // 结束位置向右偏移 30px
+}
+
+// ============================================
+// 面包屑导航动画
+// ============================================
+
+/**
+ * 面包屑导航淡入淡出+位移动画
+ *
+ * 功能: 面包屑切换时的过渡效果
+ * 使用方式:
+ * <transition name="breadcrumb">
+ *   <el-breadcrumb>...</el-breadcrumb>
+ * </transition>
+ *
+ * 动画说明:
+ * - 进入: 从右侧 20px 位置淡入
+ * - 离开: 向右侧 20px 位置淡出
+ * - move: 面包屑项位置变化时的过渡
+ */
+.breadcrumb-enter-active,
+.breadcrumb-leave-active {
+  transition: all .5s;  // 所有属性过渡，时长 0.5 秒
+}
+
+.breadcrumb-enter,
+.breadcrumb-leave-active {
+  opacity: 0;                           // 起始/结束透明度为 0
+  transform: translateX(20px);           // 水平位移 20px
+}
+
+/**
+ * 面包屑移动动画
+ *
+ * 当面包屑项位置发生变化时的过渡效果
+ * 例如: 添加或删除面包屑项时，其他项平滑移动
+ */
+.breadcrumb-move {
+  transition: all .5s;  // 所有属性过渡
+}
+
+/**
+ * 面包屑离开动画
+ *
+ * 使用绝对定位，确保离开的元素不会占用文档流空间
+ * 防止离开动画时元素跳动
+ */
+.breadcrumb-leave-active {
+  position: absolute;
+}

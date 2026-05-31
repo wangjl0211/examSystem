@@ -1,0 +1,99 @@
+# 本地配置文件
+# 用于替代环境变量和默认配置
+
+# 服务器配置
+server:
+  port: 8080
+
+# 应用配置
+spring:
+  application:
+    name: exam
+  
+  # 数据库配置
+  datasource:
+    url: ${DB_URL:jdbc:mysql://127.0.0.1:3306/db_exam?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf8}
+    username: ${DB_USERNAME}
+    password: ${SECRET_DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  
+  # Redis配置 - 生产环境配置
+  data:
+    redis:
+      database: ${REDIS_DATABASE:0}  # 生产环境使用数据库0
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      password: ${SECRET_REDIS_PASSWORD}
+      timeout: 10s
+      connect-timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 20  # 生产环境增加连接数
+          max-wait: -1ms
+          max-idle: 10
+          min-idle: 5     # 保持一定的最小空闲连接
+          time-between-eviction-runs: 60000ms  # 生产环境延长检查间隔
+  # 文件上传配置        
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 50MB   # 调整为适合业务需求的大小
+  # Spring Security配置
+  security:
+    user:
+      name: ${SECURITY_USERNAME:user}
+      password: ${SECRET_SECURITY_PASSWORD:123456}
+
+# MybatisPlus配置
+mybatis-plus:
+  global-config:
+    banner: false
+    db-config:
+      logic-not-delete-value: 0
+      logic-delete-value: 1
+  configuration:
+    # 修复P1问题：生产环境关闭SQL日志输出，使用slf4j替代StdOutImpl
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+    map-underscore-to-camel-case: true
+  type-aliases-package: cn.org.wang.exam.model
+
+# JWT配置
+jwt:
+  secret: ${SECRET_JWT_KEY}
+  expiration: ${JWT_EXPIRATION:1800000}
+  refreshThreshold: ${JWT_REFRESH_THRESHOLD:900000}
+
+# 阿里云OSS配置
+oss:
+  endpoint: ${OSS_ENDPOINT:https://oss-cn-beijing.aliyuncs.com}
+  access-key-id: ${SECRET_OSS_ACCESS_KEY_ID}
+  access-key-secret: ${SECRET_OSS_ACCESS_KEY_SECRET}
+  bucket-name: ${OSS_BUCKET_NAME:online-exam-system-backend}
+
+# Minio配置
+minio:
+  endpoint: ${MINIO_ENDPOINT:http://127.0.0.1:9000}
+  accesskey: ${SECRET_MINIO_ACCESS_KEY:admin}
+  secretKey: ${SECRET_MINIO_SECRET_KEY}
+  bucket: ${MINIO_BUCKET:online-exam}
+
+
+
+# 日志配置
+logging:
+  level:
+    root: info
+    com.example: debug
+
+# 自定义配置
+online-exam:
+  storage:
+    type: minio
+  login:
+    captcha:
+      enabled: true
+system:
+  register:
+    enabled: true
+
+

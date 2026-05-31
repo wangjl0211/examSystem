@@ -1,0 +1,257 @@
+// 移动端优先的响应式工具库
+// 断点参考 Bootstrap 5 标准
+
+// 断点变量定义
+$breakpoint-xs: 480px;    // 小屏手机
+$breakpoint-sm: 576px;    // 大屏手机
+$breakpoint-md: 768px;    // 平板竖屏
+$breakpoint-lg: 992px;    // 平板横屏 / 小屏桌面
+$breakpoint-xl: 1200px;   // 中屏桌面
+$breakpoint-xxl: 1600px;  // 大屏桌面
+
+// Mixin: 大于等于指定断点时生效
+@mixin respond-above($breakpoint) {
+  @media (min-width: $breakpoint) {
+    @content;
+  }
+}
+
+// Mixin: 小于指定断点时生效
+@mixin respond-below($breakpoint) {
+  @media (max-width: ($breakpoint - 1px)) {
+    @content;
+  }
+}
+
+// Mixin: 在两个断点之间时生效
+@mixin respond-between($lower, $upper) {
+  @media (min-width: $lower) and (max-width: ($upper - 1px)) {
+    @content;
+  }
+}
+
+// Mixin: 横屏方向
+@mixin landscape {
+  @media (orientation: landscape) {
+    @content;
+  }
+}
+
+// Mixin: 竖屏方向
+@mixin portrait {
+  @media (orientation: portrait) {
+    @content;
+  }
+}
+
+// Mixin: 触控设备
+@mixin touch-device {
+  @media (hover: none) and (pointer: coarse) {
+    @content;
+  }
+}
+
+// 工具类: 移动端隐藏
+.hide-on-mobile {
+  @include respond-below($breakpoint-lg) {
+    display: none !important;
+  }
+}
+
+// 工具类: 仅移动端显示
+.show-on-mobile {
+  display: none !important;
+  @include respond-below($breakpoint-lg) {
+    display: block !important;
+  }
+}
+
+// 工具类: 移动端全宽
+.mobile-full-width {
+  @include respond-below($breakpoint-lg) {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+// 工具类: 移动端内边距
+.mobile-padding {
+  @include respond-below($breakpoint-lg) {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+}
+
+// 工具类: 移动端纵向排列
+.mobile-stack {
+  @include respond-below($breakpoint-lg) {
+    flex-direction: column !important;
+  }
+}
+
+// 工具类: 移动端表格可横向滚动
+.mobile-table-scroll {
+  @include respond-below($breakpoint-lg) {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+// 移动端优化: 应用容器内边距
+.app-container {
+  @include respond-below($breakpoint-lg) {
+    padding: 15px !important;
+  }
+  @include respond-below($breakpoint-xs) {
+    padding: 10px !important;
+  }
+}
+
+// 移动端优化: 分页组件内边距
+.pagination-container {
+  @include respond-below($breakpoint-lg) {
+    padding: 16px 8px !important;
+  }
+}
+
+// 触控设备优化: 为 hover 交互添加 active 回退状态
+@include touch-device {
+  // 菜单项触控反馈
+  .el-menu-item,
+  .el-submenu__title {
+    &:active {
+      background-color: rgba(0, 0, 0, 0.05) !important;
+    }
+  }
+
+  // 按钮触控反馈
+  .el-button {
+    &:active {
+      opacity: 0.8;
+      transform: scale(0.98);
+    }
+  }
+
+  // 卡片触控反馈
+  .el-card {
+    &[shadow="hover"]:active {
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  // 按钮组触控优化：抵消 transform: scale(0.98) 带来的垂直偏移
+  .btn-group {
+    padding-top: 2px;
+    padding-bottom: 2px;
+  }
+}
+
+// 分屏模式适配（768px~992px）- 防止按钮组非必要换行
+@media (min-width: $breakpoint-md) and (max-width: #{$breakpoint-lg - 1}) {
+  .btn-group {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 0 8px;
+    -webkit-overflow-scrolling: touch;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    .el-button {
+      flex-shrink: 0;
+    }
+  }
+
+  // 表格操作列按钮组垂直居中
+  .el-table .btn-group {
+    align-self: center;
+  }
+}
+
+// 移动端表单与组件优化
+@media (max-width: #{$breakpoint-lg - 1}) {
+  // 行内表单在移动端纵向堆叠
+  .el-form--inline {
+    .el-form-item {
+      display: block !important;
+      width: 100% !important;
+      margin-right: 0 !important;
+      margin-bottom: 12px !important;
+    }
+    .el-form-item__content {
+      width: 100% !important;
+    }
+    .el-input,
+    .el-select,
+    .el-date-picker {
+      width: 100% !important;
+    }
+  }
+
+  // 表格字体缩小和横向滚动支持
+  .el-table {
+    font-size: 13px;
+    // 确保表格可以横向滚动
+    overflow-x: auto;
+    display: block;
+  }
+
+  // 表格容器添加横向滚动
+  .el-table__body-wrapper {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  // 表格单元格允许换行
+  .el-table .cell {
+    white-space: normal !important;
+    word-break: break-word;
+  }
+
+  // 对话框移动端接近全宽
+  .el-dialog {
+    width: 92% !important;
+    margin: 5vh auto !important;
+  }
+
+  // 抽屉组件移动端宽度
+  .el-drawer {
+    width: 85% !important;
+  }
+
+  // 卡片内边距缩小
+  .el-card {
+    .el-card__body {
+      padding: 15px !important;
+    }
+  }
+
+  // 响应式栅格: 移动端强制全宽
+  .el-col-xs-24 {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  // 表格单元格允许换行，防止水平溢出
+  .el-table {
+    .cell {
+      white-space: normal !important;
+    }
+  }
+}
+
+// 移动端触控设备: 按钮增大点击区域
+@media (max-width: #{$breakpoint-lg - 1}) and (hover: none) and (pointer: coarse) {
+  .el-button {
+    min-height: 44px;
+  }
+}
+
+// 移动端触控设备: 输入框防止 iOS 自动缩放
+@media (max-width: #{$breakpoint-lg - 1}) and (hover: none) and (pointer: coarse) {
+  .el-input__inner,
+  .el-textarea__inner {
+    font-size: 16px !important;
+  }
+}

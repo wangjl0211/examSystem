@@ -1,0 +1,130 @@
+# 测试环境配置文件
+# 专为自动化测试和集成测试优化
+
+# 服务器配置
+server:
+  port: 8081  # 测试环境使用不同端口
+
+# 应用配置
+spring:
+  application:
+    name: exam-test
+  
+  # 测试数据库配置（建议使用内存数据库或专用测试数据库）
+  datasource:
+    url: ${TEST_DB_URL:jdbc:mysql://localhost:3306/db_exam_test?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf8}
+    username: ${TEST_DB_USERNAME:test_user}
+    password: ${SECRET_TEST_DB_PASSWORD:test_password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # 测试环境连接池配置
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 1
+      connection-timeout: 30000
+  
+  # Redis配置 - 测试环境专用
+  data:
+    redis:
+      database: ${TEST_REDIS_DATABASE:15}  # 测试环境使用最后一个数据库
+      host: ${TEST_REDIS_HOST:localhost}
+      port: ${TEST_REDIS_PORT:6379}
+      password: ${SECRET_TEST_REDIS_PASSWORD:}
+      timeout: 3s  # 测试环境设置较短超时
+      connect-timeout: 1000ms
+      lettuce:
+        pool:
+          max-active: 4  # 测试环境减少连接数
+          max-wait: 3000ms
+          max-idle: 2
+          min-idle: 0
+          time-between-eviction-runs: 120000ms  # 延长检查间隔
+
+  # 文件上传配置        
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 50MB   # 调整为适合业务需求的大小
+
+  # 主配置
+  main:
+    banner-mode: off  # 测试环境关闭banner
+    allow-circular-references: true
+    allow-bean-definition-overriding: true  # 允许覆盖bean定义
+  
+  # 文件上传配置
+  servlet:
+    multipart:
+      max-file-size: 2MB  # 测试环境减少文件大小限制
+  # Spring Security配置
+  security:
+    user:
+      name: ${TEST_SECURITY_USERNAME:user}
+      password: ${SECRET_TEST_SECURITY_PASSWORD:123456}
+  # 测试环境特定配置
+  jackson:
+    default-property-inclusion: non_null  # 测试环境不序列化null值
+    serialization:
+      write-dates-as-timestamps: false
+
+# MybatisPlus配置 - 测试环境优化
+mybatis-plus:
+  global-config:
+    banner: false
+    db-config:
+      logic-not-delete-value: 0
+      logic-delete-value: 1
+      id-type: auto
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  # 测试环境显示SQL
+    map-underscore-to-camel-case: true
+    cache-enabled: false  # 测试环境关闭缓存
+  type-aliases-package: cn.org.wang.exam.model
+
+# JWT配置
+jwt:
+  secret: ${SECRET_TEST_JWT_KEY:test-jwt-secret-for-exam-system-2026}  # 测试环境使用简单密钥
+  expiration: ${TEST_JWT_EXPIRATION:900000}  # 测试环境缩短token有效期（15分钟）
+  refreshThreshold: ${TEST_JWT_REFRESH_THRESHOLD:300000}  # 5分钟刷新阈值
+
+# Minio配置 - 测试环境使用模拟或专用实例
+minio:
+  endpoint: ${TEST_MINIO_ENDPOINT:http://localhost:9001}
+  accesskey: ${SECRET_TEST_MINIO_ACCESS_KEY:test_access}
+  secretKey: ${SECRET_TEST_MINIO_SECRET_KEY:test_secret}
+  bucket: ${TEST_MINIO_BUCKET:online-exam-test}
+
+
+
+# 日志配置 - 测试环境详细日志
+logging:
+  level:
+    root: warn
+    cn.org.wang.exam.: debug
+    org.springframework.test: info
+    com.github.database.rider: debug
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# 测试环境自定义配置
+online-exam:
+  storage:
+    type: mock  # 测试环境使用mock存储
+  login:
+    captcha:
+      enabled: false  # 测试环境关闭验证码
+system:
+  register:
+    enabled: true  # 测试环境开启注册
+  
+# 测试专用配置
+test:
+  redis:
+    flush-on-startup: true  # 启动时清空Redis
+    key-prefix: "test:"  # 测试环境key前缀
+  database:
+    reset-before-test: true  # 测试前重置数据库
+    seed-data: true  # 是否加载种子数据
+  mock:
+    enabled: true  # 启用mock服务
+    port: 8082  # mock服务端口
+

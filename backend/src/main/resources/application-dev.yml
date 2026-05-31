@@ -1,0 +1,99 @@
+server:
+  port: 8080 # 允许端口号
+spring:
+  main:
+    # 关闭banner
+    banner-mode: console
+    # 允许循环引用
+    allow-circular-references: true
+  # mysql配置
+  datasource:
+    url: ${DB_URL:jdbc:mysql://127.0.0.1:3306/db_exam?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf8}
+    username: ${DB_USERNAME}
+    password: ${SECRET_DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    
+# redis配置 - 统一使用Lettuce连接池
+  data:
+    redis:
+      database: ${REDIS_DATABASE:1}  # 开发环境使用数据库1，生产环境使用数据库0
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      password: ${SECRET_REDIS_PASSWORD}
+      timeout: 10s
+      connect-timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-wait: -1ms
+          max-idle: 8
+          min-idle: 0
+          time-between-eviction-runs: 30000ms
+  # 文件上传配置        
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 50MB   # 调整为适合业务需求的大小
+  # Spring Security配置
+  security:
+    user:
+      name: ${SECURITY_USERNAME:user}
+      password: ${SECRET_SECURITY_PASSWORD:123456}
+#MybatisPlus配置
+mybatis-plus:
+  global-config:
+    # 关闭banner
+    banner: false
+    db-config:
+      # 逻辑删除配置
+      logic-not-delete-value: 0  # 未删除值
+      logic-delete-value: 1      # 已删除值
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+  type-aliases-package: cn.org.wang.exam.model
+
+#jwt配置 - 使用RS256非对称加密算法
+jwt:
+  algorithm: RS256
+  private-key-path: ${JWT_PRIVATE_KEY_PATH:classpath:keys/rsa-private-pkcs8.pem}
+  public-key-path: ${JWT_PUBLIC_KEY_PATH:classpath:keys/rsa-public.pem}
+  expiration: ${JWT_EXPIRATION:1800000}       # 30分钟，单位为毫秒 token过期时间
+  refresh-threshold: ${JWT_REFRESH_THRESHOLD:900000}  # 15分钟，单位为毫秒 判断是否剩xx分钟过期
+
+# 阿里云oss文件存储服务
+oss:
+  endpoint: ${OSS_ENDPOINT:https://oss-cn-beijing.aliyuncs.com}
+  access-key-id: ${SECRET_OSS_ACCESS_KEY_ID}
+  access-key-secret: ${SECRET_OSS_ACCESS_KEY_SECRET}
+  bucket-name: ${OSS_BUCKET_NAME:online-exam-system-backend}
+
+# Minio本地文件存储服务
+minio:
+  endpoint: ${MINIO_ENDPOINT:http://127.0.0.1:9000} # minio服务地址
+  accesskey: ${SECRET_MINIO_ACCESS_KEY:admin} # minio学号
+  secretKey: ${SECRET_MINIO_SECRET_KEY} # minio密码
+  bucket: ${MINIO_BUCKET:online-exam} #桶名
+
+
+
+# 日志配置
+logging:
+  level:
+    root: info
+    com.example: debug
+
+# 自定义配置
+online-exam:
+  storage:
+    type: minio # 存储方式的配置 aliyun、minio
+system:
+  register:
+    enabled: true  # 控制是否开放注册功能
+
+# 验证码配置
+verification:
+  code:
+    expire-minutes: ${VERIFICATION_CODE_EXPIRE:5}  # 验证码过期时间（分钟）
+
+

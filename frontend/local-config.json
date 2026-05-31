@@ -1,0 +1,10 @@
+{
+  "VUE_APP_BASE_API": "/api",
+  "VUE_APP_ENABLE_REGISTER": true,
+  "VUE_APP_ICP_NUMBER": "京ICP备XXXXXXXX号",
+  "VUE_APP_ICP_LINK": "https://beian.miit.gov.cn/",
+  "VUE_APP_TITLE": "校园在线考试系统",
+  "API_BASE_URL": "http://localhost:8080",
+  "DEFAULT_TIMEOUT": 30000,
+  "STORAGE_TYPE": "local"
+}

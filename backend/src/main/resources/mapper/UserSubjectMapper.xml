@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.org.wang.exam.mapper.UserSubjectMapper">
+
+    <!-- 根据用户ID获取课程ID列表 -->
+    <select id="getSubjectIdListByUserId" resultType="java.lang.Integer">
+        SELECT subject_id FROM t_user_subject
+        WHERE user_id = #{userId} AND is_deleted = 0
+    </select>
+
+    <!-- 根据课程ID获取用户ID列表 -->
+    <select id="getUserListBysubjectId" resultType="java.lang.Integer">
+        SELECT user_id FROM t_user_subject
+        WHERE subject_id = #{subjectId} AND is_deleted = 0
+    </select>
+
+    <!-- 删除用户课程关联 -->
+    <delete id="deleteUserSubject">
+        DELETE FROM t_user_subject
+        WHERE user_id = #{userId} AND subject_id = #{subjectId}
+    </delete>
+    
+    <!-- 检查用户与课程的关联记录是否存在（包括逻辑删除的记录） -->
+    <select id="checkUserSubjectExists" resultType="cn.org.wang.exam.model.entity.UserSubject">
+        SELECT * FROM t_user_subject
+        WHERE user_id = #{userId} AND subject_id = #{subjectId}
+    </select>
+    
+    <!-- 恢复逻辑删除的用户课程关联记录 -->
+    <update id="restoreUserSubject">
+        UPDATE t_user_subject
+        SET is_deleted = 0, join_time = #{joinTime}
+        WHERE id = #{id}
+    </update>
+
+</mapper>
+

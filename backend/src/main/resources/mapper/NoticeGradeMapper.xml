@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.org.wang.exam.mapper.NoticeSubjectMapper">
+
+    <!-- 添加公告和课程关系 -->
+    <insert id="addNoticesubject">
+        insert into t_notice_subject
+        (notice_id,subject_id)
+        VALUES
+        <foreach collection="subjectIdList" item="subjectId" separator=",">
+            (#{noticeId},#{subjectId})
+        </foreach>
+    </insert>
+
+    <!-- 删除公告课程关系 -->
+    <delete id="delNoticesubject">
+        delete from t_notice_subject
+        where notice_id = #{noticeId}
+    </delete>
+
+    <!-- 删除公告和课程关联 -->
+    <update id="deleteNoticesubject">
+        update t_notice_subject
+        set is_deleted = 1
+        where notice_id in
+        <foreach collection="noticeIds" item="nId" open="(" separator="," close=")">
+            #{nId}
+        </foreach>
+    </update>
+
+    <!-- 获得课程关联的公告id -->
+    <select id="getNoticeIdList" resultType="java.lang.Integer">
+        select notice_id from t_notice_subject where is_deleted = 0 and subject_id = #{subjectId}
+    </select>
+
+    <!-- 获得课程关联的课程id -->
+    <select id="getsubjectList" resultType="java.lang.Integer">
+        select n.subject_id from t_notice_subject n where n.notice_id = #{noticeId}
+    </select>
+
+</mapper>
+

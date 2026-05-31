@@ -1,0 +1,93 @@
+version: '3.8'
+
+services:
+  # MySQL数据库服务
+  mysql:
+    image: mysql:8.0
+    container_name: exam-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root123456}
+      MYSQL_DATABASE: db_exam
+      MYSQL_USER: ${DB_USERNAME:-exam_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-exam123456}
+      TZ: Asia/Shanghai
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./backend/sql:/docker-entrypoint-initdb.d
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis缓存服务
+  redis:
+    image: redis:7-alpine
+    container_name: exam-redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redis123456}
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-redis123456}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 后端应用服务
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: exam-backend
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      # 数据库配置
+      DB_URL: jdbc:mysql://mysql:3306/db_exam?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf8
+      DB_USERNAME: ${DB_USERNAME:-exam_user}
+      SECRET_DB_PASSWORD: ${DB_PASSWORD:-exam123456}
+      # Redis配置
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      SECRET_REDIS_PASSWORD: ${REDIS_PASSWORD:-redis123456}
+      # JWT配置
+      SECRET_JWT_KEY: ${JWT_SECRET:-your-jwt-secret-key-here}
+      # 文件存储配置
+      MINIO_ENDPOINT: http://minio:9000
+      SECRET_MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-minioadmin}
+      SECRET_MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-minioadmin}
+      # 邮件配置
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      SECRET_MAIL_PASSWORD: ${MAIL_PASSWORD}
+      # Spring配置
+      SPRING_PROFILES_ACTIVE: prod
+
+  # Nginx前端服务
+  nginx:
+    image: nginx:alpine
+    container_name: exam-nginx
+    restart: unless-stopped
+    ports:
+      - "${NGINX_PORT:-80}:80"
+    volumes:
+      - ./frontend/dist:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+
+volumes:
+  mysql-data:
+  redis-data:

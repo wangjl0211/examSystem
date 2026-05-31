@@ -1,0 +1,99 @@
+/**
+ * SCSS 混入（Mixin）模块
+ *
+ * 该文件定义了可重用的 SCSS 代码块（Mixin）
+ * Mixin 类似于函数，可以接受参数并生成重复使用的样式代码
+ *
+ * 主要功能:
+ * 1. clearfix - 清除浮动
+ * 2. scrollBar - 自定义滚动条样式
+ * 3. relative - 相对定位布局
+ */
+
+/**
+ * 清除浮动混入
+ *
+ * 功能: 解决子元素浮动导致父容器高度塌陷的问题
+ * 原理: 在浮动元素后添加一个使用 clear: both 的伪元素
+ *
+ * 使用方法:
+ * .parent {
+ *   @include clearfix;
+ * }
+ *
+ * 等同于:
+ * .parent::after {
+ *   content: "";
+ *   display: table;
+ *   clear: both;
+ * }
+ */
+@mixin clearfix {
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
+/**
+ * 自定义滚动条样式混入
+ *
+ * 功能: 为容器设置统一风格的滚动条
+ * 样式: 浅灰色轨道 + 圆角滑块
+ *
+ * 使用方法:
+ * .container-with-scroll {
+ *   @include scrollBar;
+ * }
+ *
+ * 包含三个部分:
+ * 1. track-piece: 滚动条轨道（底层背景）
+ * 2. scrollbar: 滚动条整体宽度
+ * 3. thumb: 滚动条滑块（可拖动部分）
+ */
+@mixin scrollBar {
+  // 滚动条轨道样式
+  &::-webkit-scrollbar-track-piece {
+    background: #d3dce6;  // 浅灰蓝色轨道背景
+  }
+
+  // 滚动条整体尺寸
+  &::-webkit-scrollbar {
+    width: 6px;  // 滚动条宽度
+    height: 6px; // 滚动条高度
+  }
+
+  // 滚动条滑块样式
+  &::-webkit-scrollbar-thumb {
+    background: #99a9bf;      // 滑块背景色
+    border-radius: 20px;      // 圆角效果
+    &:hover {
+      background: #7b8fa3;    // 悬停时变深
+    }
+  }
+}
+
+/**
+ * 相对定位布局混入
+ *
+ * 功能: 快速设置元素的相对定位并占满父容器宽高
+ * 用途: 常用于需要作为子元素定位基准的容器
+ *
+ * 使用方法:
+ * .container {
+ *   @include relative;
+ * }
+ *
+ * 等同于:
+ * .container {
+ *   position: relative;
+ *   width: 100%;
+ *   height: 100%;
+ * }
+ */
+@mixin relative {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
